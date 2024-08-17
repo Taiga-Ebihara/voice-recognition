@@ -22,24 +22,31 @@ async function speechToText(): Promise<string> {
 }
 
 async function chatCompletion(prompt: string): Promise<string> {
-  const res = await client.chat.completions.create({
+  const stream = await client.chat.completions.create({
     messages: [
       {
         role: "user",
         content: prompt,
       },
     ],
-    model: "gpt-3.5-turbo",
+    model: "gpt-4o",
+    stream: true,
   });
 
-  return res.choices[0]?.message.content ?? "not content";
+  let res = "";
+  for await (const chunk of stream) {
+    res += chunk.choices[0]?.delta.content;
+    console.log("Completion:", chunk.choices[0]?.delta.content);
+  }
+
+  return res;
 }
 
 async function main() {
   const text = await speechToText();
   console.log("Transcription:", text);
   const completion = await chatCompletion(text);
-  console.log("Completion:", completion);
+  console.log("Result:", completion);
 }
 
 const file = fs.createWriteStream(filePath, { encoding: "binary" });
