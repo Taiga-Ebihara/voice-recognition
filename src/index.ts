@@ -29,7 +29,7 @@ async function chatCompletion(prompt: string): Promise<string> {
         content: prompt,
       },
     ],
-    model: "gpt-4o",
+    model: "gpt-4o-mini",
     stream: true,
   });
 
