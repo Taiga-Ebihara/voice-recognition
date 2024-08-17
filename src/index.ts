@@ -10,7 +10,7 @@ const client = new OpenAI({
 
 const filePath = path.resolve(__dirname, "./assets/sample.wav");
 
-async function main() {
+async function speechToText(): Promise<string> {
   const file = fs.createReadStream(filePath);
 
   const res = await client.audio.transcriptions.create({
@@ -18,7 +18,28 @@ async function main() {
     model: "whisper-1",
   });
 
-  console.log(res);
+  return res.text;
+}
+
+async function chatCompletion(prompt: string): Promise<string> {
+  const res = await client.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    model: "gpt-3.5-turbo",
+  });
+
+  return res.choices[0]?.message.content ?? "not content";
+}
+
+async function main() {
+  const text = await speechToText();
+  console.log("Transcription:", text);
+  const completion = await chatCompletion(text);
+  console.log("Completion:", completion);
 }
 
 const file = fs.createWriteStream(filePath, { encoding: "binary" });
