@@ -3,15 +3,18 @@ import fs from "fs";
 import path from "path";
 // @ts-ignore
 import * as recorder from "node-record-lpcm16";
+// @ts-ignore
+import player from "play-sound";
 
 const client = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-const filePath = path.resolve(__dirname, "./assets/sample.wav");
+const inputAudioPath = path.resolve(__dirname, "./assets/input.wav");
+const outputAudioPath = path.resolve(__dirname, "./assets/output.wav");
 
 async function speechToText(): Promise<string> {
-  const file = fs.createReadStream(filePath);
+  const file = fs.createReadStream(inputAudioPath);
 
   const res = await client.audio.transcriptions.create({
     file,
@@ -47,12 +50,25 @@ async function textToSpeech(text: string): Promise<void> {
     model: "tts-1",
     input: text,
     voice: "nova",
+    speed: 1.1,
   });
 
   const arrayBuffer = await res.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
-  fs.writeFileSync(path.resolve(__dirname, "./assets/output.wav"), buffer);
+  fs.writeFileSync(outputAudioPath, buffer);
   console.log("Audio saved to output.wav");
+}
+
+function playAudio(filePath: string): void {
+  const audioPlayer = player();
+  audioPlayer.play(filePath, (err: any) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    console.log("Playing audio...");
+  });
 }
 
 async function main() {
@@ -61,9 +77,10 @@ async function main() {
   const completion = await chatCompletion(text);
   console.log("Result:", completion);
   await textToSpeech(completion);
+  playAudio(outputAudioPath);
 }
 
-const file = fs.createWriteStream(filePath, { encoding: "binary" });
+const file = fs.createWriteStream(inputAudioPath, { encoding: "binary" });
 const recording = recorder.record().stream().pipe(file);
 console.log("Recording...");
 
