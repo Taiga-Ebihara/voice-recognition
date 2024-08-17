@@ -28,6 +28,10 @@ async function chatCompletion(prompt: string): Promise<string> {
   const stream = await client.chat.completions.create({
     messages: [
       {
+        role: "system",
+        content: "以下の質問になるべく140文字以内で答えてください。",
+      },
+      {
         role: "user",
         content: prompt,
       },
