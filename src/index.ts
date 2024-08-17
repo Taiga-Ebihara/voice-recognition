@@ -42,11 +42,25 @@ async function chatCompletion(prompt: string): Promise<string> {
   return res;
 }
 
+async function textToSpeech(text: string): Promise<void> {
+  const res = await client.audio.speech.create({
+    model: "tts-1",
+    input: text,
+    voice: "nova",
+  });
+
+  const arrayBuffer = await res.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+  fs.writeFileSync(path.resolve(__dirname, "./assets/output.wav"), buffer);
+  console.log("Audio saved to output.wav");
+}
+
 async function main() {
   const text = await speechToText();
   console.log("Transcription:", text);
   const completion = await chatCompletion(text);
   console.log("Result:", completion);
+  await textToSpeech(completion);
 }
 
 const file = fs.createWriteStream(filePath, { encoding: "binary" });
