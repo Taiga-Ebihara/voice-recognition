@@ -14,13 +14,7 @@
     "apps/**/*"
   ],
   "devDependencies": {
-    "nx": "^19.6.0",
-    "tsx": "^4.17.0",
-    "typescript": "^5.5.4"
+    "nx": "^19.6.0"
   },
-  "dependencies": {
-    "node-record-lpcm16": "^1.0.1",
-    "openai": "^4.56.0",
-    "play-sound": "^1.1.6"
-  }
+  "dependencies": {}
 }

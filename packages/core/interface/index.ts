@@ -1,2 +1,3 @@
-export * from "./speechToText/base";
-export * from "./textToSpeech/base";
+export * from "./speechToText";
+export * from "./textToSpeech";
+export * from "./chat";

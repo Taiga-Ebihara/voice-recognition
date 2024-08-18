@@ -1,0 +1,4 @@
+{
+  "extends": "@voice-recognition/tsconfig/tsconfig-base.json",
+  "include": ["*/**/*.ts"]
+}

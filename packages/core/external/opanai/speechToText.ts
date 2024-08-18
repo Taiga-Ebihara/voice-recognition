@@ -2,7 +2,7 @@ import { toFile } from "openai";
 import { type TranscriptionCreateParams } from "openai/resources/audio/transcriptions";
 
 import { CORE_CONSTANTS } from "../../common/constant";
-import { type BaseS2TProcessor } from "../../interface/speechToText/base";
+import { type BaseS2TProcessor } from "../../interface/speechToText";
 
 import { openAIClient } from "./client";
 
@@ -24,15 +24,15 @@ export class OpenAIS2TProcessor implements BaseS2TProcessor {
     audio,
     options,
   }: {
-    audio: Blob;
-    options: OpenAIS2TProcessorOptions;
+    audio: Buffer;
+    options?: OpenAIS2TProcessorOptions;
   }): Promise<string> {
-    const file = await toFile(audio);
+    const file = await toFile(audio, "audio.wav");
 
     const res = await openAIClient.audio.transcriptions.create({
       ...options,
       file,
-      model: options.model ?? CORE_CONSTANTS.DEFAULT_OPEN_AI_S2T_MODEL,
+      model: options?.model ?? CORE_CONSTANTS.DEFAULT_OPEN_AI_S2T_MODEL,
     });
 
     return res.text;
