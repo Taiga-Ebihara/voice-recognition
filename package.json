@@ -9,7 +9,12 @@
   },
   "author": "",
   "license": "ISC",
+  "workspaces": [
+    "packages/**/*",
+    "apps/**/*"
+  ],
   "devDependencies": {
+    "nx": "^19.6.0",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
   },

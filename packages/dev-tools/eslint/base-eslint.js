@@ -1,0 +1,60 @@
+module.exports = {
+  extends: ["prettier"],
+  plugins: ["import", "unused-imports", "@typescript-eslint"],
+  rules: {
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        alphabetize: {
+          order: "asc",
+          caseInsensitive: true,
+        },
+      },
+    ],
+    "import/export": "error",
+    "import/no-duplicates": "error",
+    // 'import/first': 'error',
+    // 'import/exports-last': 'error',
+    "import/newline-after-import": "error",
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        prefer: "type-imports",
+        fixStyle: "inline-type-imports",
+      },
+    ],
+    "@typescript-eslint/consistent-type-exports": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/consistent-type-assertions": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    // "@typescript-eslint/no-restricted-types": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/restrict-template-expressions": "error",
+    "@typescript-eslint/prefer-as-const": "error",
+    "@typescript-eslint/strict-boolean-expressions": [
+      "error",
+      {
+        allowString: false,
+        allowNumber: false,
+        allowNullableObject: false,
+        allowNullableBoolean: false,
+        allowNullableString: false,
+        allowNullableNumber: false,
+        allowNullableEnum: false,
+        allowAny: false,
+        allowRuleToRunWithoutStrictNullChecksIKnowWhatIAmDoing: false,
+      },
+    ],
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "error",
+    "object-shorthand": ["error", "always", { avoidQuotes: true }],
+  },
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: "./tsconfig.json",
+  },
+};

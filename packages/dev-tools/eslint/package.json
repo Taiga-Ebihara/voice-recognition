@@ -1,0 +1,18 @@
+{
+  "name": "@voice-recognition/eslint",
+  "version": "1.0.0",
+  "private": true,
+  "files": [
+    "base-eslint.js"
+  ],
+  "scripts": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "@voice-recognition/tsconfig": "*",
+    "eslint": "^8",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-unused-imports": "^4.0.0"
+  }
+}
