@@ -22,15 +22,15 @@ export class OpenAIT2SProcessor implements BaseT2SProcessor {
     options,
   }: {
     text: string;
-    options: OpenAIT2SProcessorOptions;
-  }): Promise<Blob> {
+    options?: OpenAIT2SProcessorOptions;
+  }): Promise<Buffer> {
     const res = await openAIClient.audio.speech.create({
       ...options,
       input: text,
-      model: options.model ?? CORE_CONSTANTS.DEFAULT_OPEN_AT_T2S_MODEL,
-      voice: options.voice ?? CORE_CONSTANTS.DEFAULT_OPEN_AI_T2S_VOICE,
+      model: options?.model ?? CORE_CONSTANTS.DEFAULT_OPEN_AT_T2S_MODEL,
+      voice: options?.voice ?? CORE_CONSTANTS.DEFAULT_OPEN_AI_T2S_VOICE,
     });
 
-    return await res.blob();
+    return Buffer.from(await res.arrayBuffer());
   }
 }

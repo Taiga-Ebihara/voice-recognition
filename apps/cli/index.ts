@@ -1,64 +1,70 @@
-import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 // @ts-ignore
 import * as recorder from "node-record-lpcm16";
 // @ts-ignore
 import player from "play-sound";
-
-const client = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
-});
+import {
+  createChatProcessor,
+  createSpeechToTextProcessor,
+  createTextToSpeechProcessor,
+} from "@voice-recognition/core";
 
 const inputAudioPath = path.resolve(__dirname, "./assets/input.wav");
 const outputAudioPath = path.resolve(__dirname, "./assets/output.wav");
 
 async function speechToText(): Promise<string> {
-  const file = fs.createReadStream(inputAudioPath);
+  const container = createSpeechToTextProcessor({ type: "openAI" });
+  if (container.type !== "openAI") {
+    throw new Error("Unsupported S2TProcessorType");
+  }
 
-  const res = await client.audio.transcriptions.create({
-    file,
-    model: "whisper-1",
+  const file = fs.readFileSync(inputAudioPath);
+
+  return container.processor.transcribe({
+    audio: file,
   });
-
-  return res.text;
 }
 
 async function chatCompletion(prompt: string): Promise<string> {
-  const stream = await client.chat.completions.create({
-    messages: [
-      {
-        role: "system",
-        content: "以下の質問になるべく140文字以内で答えてください。",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    model: "gpt-4o-mini",
-    stream: true,
+  const container = createChatProcessor({ type: "openAI" });
+  if (container.type !== "openAI") {
+    throw new Error("Unsupported ChatProcessorType");
+  }
+
+  const stream = container.processor.streamCompletion({
+    prompt,
+    options: {
+      messages: [
+        {
+          role: "system",
+          content: "以下の質問になるべく140文字以内で答えてください。",
+        },
+      ],
+    },
   });
 
   let res = "";
   for await (const chunk of stream) {
-    res += chunk.choices[0]?.delta.content;
-    console.log("Completion:", chunk.choices[0]?.delta.content);
+    res += chunk;
+    console.log("Completion:", chunk);
   }
 
   return res;
 }
 
 async function textToSpeech(text: string): Promise<void> {
-  const res = await client.audio.speech.create({
-    model: "tts-1",
-    input: text,
-    voice: "nova",
-    speed: 1.1,
-  });
+  const container = createTextToSpeechProcessor({ type: "openAI" });
+  if (container.type !== "openAI") {
+    throw new Error("Unsupported T2SProcessorType");
+  }
 
-  const arrayBuffer = await res.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const buffer = await container.processor.createSpeech({
+    text,
+    options: {
+      speed: 1.1,
+    },
+  });
   fs.writeFileSync(outputAudioPath, buffer);
   console.log("Audio saved to output.wav");
 }
